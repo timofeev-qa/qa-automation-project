@@ -42,6 +42,13 @@ Additional:
 - empty results  
 - basic negative cases  
 
+- task limit: max 3 active tasks per user
+    - preventing creation of 4th active task
+    - preventing update from inactive → active when limit reached
+    - allowing update of existing active tasks without breaking limit
+    - freeing slot after task completion
+    - inactive tasks do not affect active limit
+
 ---
 
 ## Notes
