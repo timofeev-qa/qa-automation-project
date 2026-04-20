@@ -1,11 +1,13 @@
 from db.queries import (
     get_user_by_id,
     get_task_by_id,
-    get_token_by_user
+    get_token_by_user,
+    get_active_tasks_by_user
 )
 
 
 ALLOWED_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789_"
+ACTIVE_TASK_LIMIT = 3
 
 
 # user validation
@@ -222,3 +224,31 @@ def return_search_key_is_active(is_active=None):
         return True
     else:
         raise ValueError("is_active must be 'active' or None")
+
+def validate_task_payload_is_instance(key):
+    if not isinstance(key, dict):
+        raise ValueError("task's payload must be a dict")
+
+def validate_tasks_limit_for_create(user_id, task_payload):
+    validate_key_existance(user_id)
+    validate_task_payload_is_instance(task_payload)
+
+    if "task_status" in task_payload:
+        if "active" == task_payload["task_status"]:
+            count_tasks = len(list(get_active_tasks_by_user(user_id)))
+            if count_tasks >= ACTIVE_TASK_LIMIT:
+                raise ValueError(f"adding additional active task will exceed user's active tasks limit of: '{ACTIVE_TASK_LIMIT}'")
+            
+def validate_tasks_limit_for_update(user_id, task_id, task_payload):
+    validate_key_existance(user_id)
+    validate_key_existance(task_id)
+    validate_task_payload_is_instance(task_payload)
+
+    if "task_status" in task_payload:
+        if "active" == task_payload["task_status"]:
+            count_tasks = len(list(get_active_tasks_by_user(user_id)))
+            pre_updated_task = get_task_by_id(task_id)
+
+            if count_tasks >= ACTIVE_TASK_LIMIT and pre_updated_task["task_status"] != "active":
+                raise ValueError(f"updating this task will exceed user's active tasks limit of: '{ACTIVE_TASK_LIMIT}'")
+            

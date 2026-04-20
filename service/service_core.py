@@ -27,7 +27,9 @@ from service.service_validations import (
     validate_key_existance,
     validate_task_is_done,
     return_search_key_is_active,
-    validate_token_is_linked_to_user
+    validate_token_is_linked_to_user,
+    validate_tasks_limit_for_create,
+    validate_tasks_limit_for_update,
 )
 
 
@@ -47,6 +49,7 @@ def svc_create_task(user_token, payload):
     validate_task_for_create(payload)
     validate_user_token(user_token, payload)
     validate_user_is_active(payload["user_id"])
+    validate_tasks_limit_for_create(payload["user_id"], payload)
     return create_task(payload)
 
 # get
@@ -108,6 +111,7 @@ def svc_update_task_by_id(user_token, task_id, user_id, payload):
     validate_token_is_linked_to_user(user_token, user_id)
     validate_task_is_done(task_id, payload)
     validate_user_is_active(user_id)
+    validate_tasks_limit_for_update(user_id, task_id, payload)
     return update_task_by_id(task_id, payload)
 
 # delete
