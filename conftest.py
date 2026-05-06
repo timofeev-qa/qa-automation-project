@@ -1,4 +1,4 @@
-from clients.db_client import DBClient
+from clients.db_client import DatabaseInitializer
 from clients.user_client import UserClient
 from clients.task_client import TaskClient
 
@@ -7,7 +7,7 @@ import pytest
 
 @pytest.fixture
 def db_client():
-    return DBClient()
+    return DatabaseInitializer()
 
 @pytest.fixture
 def user_client(db_client):
@@ -19,7 +19,7 @@ def task_client(db_client):
 
 @pytest.fixture
 def authorized_user_id(user_client):
-    user_id = user_client.cli_create_random_inactive_user()
+    user_id = user_client.cli_create_user_with_token()
     token = dict(user_client.cli_get_user_token(user_id))
     try:
         yield user_id
@@ -30,7 +30,7 @@ def authorized_user_id(user_client):
 
 @pytest.fixture
 def authorized_active_user_id(user_client):
-    active_user_id = user_client.cli_create_random_inactive_user(user_status="active")
+    active_user_id = user_client.cli_create_user_with_token(user_status="active")
     token = dict(user_client.cli_get_user_token(active_user_id))
     try:
         yield active_user_id

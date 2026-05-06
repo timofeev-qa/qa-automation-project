@@ -9,7 +9,7 @@ from helpers.asserts import (
 def test_create_get_user_scenario(user_client):
     # creating user
     payload = user_client.cli_build_user_payload()
-    user_id = user_client.cli_create_random_inactive_user(**payload)
+    user_id = user_client.cli_create_user_with_token(**payload)
     
     # getting user
     user = dict(user_client.cli_get_user_by_id(user_id))
@@ -57,7 +57,7 @@ def test_delete_user_scenario(authorized_user_id, user_client):
 def test_create_user_with_existed_email(user_client):
     # creating fist user
     first_payload = user_client.cli_build_user_payload()
-    first_user_id = user_client.cli_create_random_inactive_user(**first_payload)
+    first_user_id = user_client.cli_create_user_with_token(**first_payload)
 
     # creating second user
     second_payload = {
@@ -66,7 +66,7 @@ def test_create_user_with_existed_email(user_client):
         "user_status": "inactive"
     }
     with pytest.raises(sqlite3.IntegrityError) as exc:
-        second_user_id = user_client.cli_create_random_inactive_user(**second_payload)
+        second_user_id = user_client.cli_create_user_with_token(**second_payload)
     assert "UNIQUE constraint failed" in str(exc.value), "error message does not match"
     assert "users.user_email" in str(exc.value), "error should reference users.user_email column"
 
@@ -79,7 +79,7 @@ def test_deleting_user_removes_all_associated_entities_scenario(authorized_activ
     token = dict(user_client.cli_get_user_token(authorized_active_user_id))
 
     # creating task
-    task_id = task_client.cli_create_inactive_task_for_active_user(
+    task_id = task_client.cli_create_task_for_active_user(
         user_token=token["token_value"],
         user_id=authorized_active_user_id
     )
