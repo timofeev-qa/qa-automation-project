@@ -36,7 +36,7 @@ class UserClient():
         }
         return payload
     
-    def cli_create_random_inactive_user(self, **overrides):
+    def cli_create_user_with_token(self, **overrides):
         user_payload = self.cli_build_user_payload(**overrides)
         user_id = svc_create_user(user_payload)
 

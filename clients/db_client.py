@@ -1,7 +1,7 @@
 from db.queries import init_db
 
 
-class DBClient():
+class DatabaseInitializer():
     def __init__(self):
         self.start_db()
 

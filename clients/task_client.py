@@ -24,7 +24,7 @@ class TaskClient():
                 payload[field] = value.lower()
         return payload
 
-    def cli_create_inactive_task_for_active_user(self, user_token, user_id, **overrides):
+    def cli_create_task_for_active_user(self, user_token, user_id, **overrides):
         payload = self.cli_build_task_payload(user_id, **overrides)
         return svc_create_task(user_token, payload)
     

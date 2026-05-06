@@ -12,7 +12,7 @@ def test_create_get_tasks_for_active_user_scenario(authorized_active_user_id, us
 
     # creating tasks
     first_task_payload = task_client.cli_build_task_payload(authorized_active_user_id)
-    first_task_id = task_client.cli_create_inactive_task_for_active_user(
+    first_task_id = task_client.cli_create_task_for_active_user(
         user_token=token["token_value"],
         user_id=authorized_active_user_id,
         task_title=first_task_payload["task_title"],
@@ -21,7 +21,7 @@ def test_create_get_tasks_for_active_user_scenario(authorized_active_user_id, us
     )
 
     second_task_payload = task_client.cli_build_task_payload(authorized_active_user_id)
-    second_task_id = task_client.cli_create_inactive_task_for_active_user(
+    second_task_id = task_client.cli_create_task_for_active_user(
         user_token=token["token_value"],
         user_id=authorized_active_user_id,
         task_title=second_task_payload["task_title"],
@@ -30,7 +30,7 @@ def test_create_get_tasks_for_active_user_scenario(authorized_active_user_id, us
     )
 
     third_task_payload = task_client.cli_build_task_payload(authorized_active_user_id)
-    third_task_id = task_client.cli_create_inactive_task_for_active_user(
+    third_task_id = task_client.cli_create_task_for_active_user(
         user_token=token["token_value"],
         user_id=authorized_active_user_id,
         task_title=third_task_payload["task_title"],
@@ -69,7 +69,7 @@ def test_create_task_for_inactive_user(authorized_user_id, user_client, task_cli
 
     # creating task
     with pytest.raises(ValueError) as exc:
-        task_id = task_client.cli_create_inactive_task_for_active_user(
+        task_id = task_client.cli_create_task_for_active_user(
             user_token=token["token_value"],
             user_id=authorized_user_id
         )
@@ -80,7 +80,7 @@ def test_create_update_task_status_scenario(authorized_active_user_id, user_clie
     token = dict(user_client.cli_get_user_token(authorized_active_user_id))
 
     # creating task
-    task_id = task_client.cli_create_inactive_task_for_active_user(
+    task_id = task_client.cli_create_task_for_active_user(
         user_token=token["token_value"],
         user_id=authorized_active_user_id
     )
@@ -106,7 +106,7 @@ def test_validate_restrictions_for_task_with_status_done(authorized_active_user_
     token = dict(user_client.cli_get_user_token(authorized_active_user_id))
 
     # creating task
-    task_id = task_client.cli_create_inactive_task_for_active_user(
+    task_id = task_client.cli_create_task_for_active_user(
         user_token=token["token_value"],
         user_id=authorized_active_user_id,
         task_status="done"
@@ -154,13 +154,13 @@ def test_validate_restrictions_for_user_to_have_active_tasks_exceeded_active_tas
 
     # creating active & inactive tasks
 
-    inactive_task_id = task_client.cli_create_inactive_task_for_active_user(
+    inactive_task_id = task_client.cli_create_task_for_active_user(
         user_token=token["token_value"],
         user_id=authorized_active_user_id
     )
 
     for _ in range (ACTIVE_TASK_LIMIT):
-        task_client.cli_create_inactive_task_for_active_user(
+        task_client.cli_create_task_for_active_user(
             user_token=token["token_value"],
             user_id=authorized_active_user_id,
             task_status="active"
@@ -173,7 +173,7 @@ def test_validate_restrictions_for_user_to_have_active_tasks_exceeded_active_tas
 
     # creating one more active task
     with pytest.raises(ValueError) as exc:
-        task_client.cli_create_inactive_task_for_active_user(
+        task_client.cli_create_task_for_active_user(
             user_token=token["token_value"],
             user_id=authorized_active_user_id,
             task_status="active"
@@ -206,14 +206,14 @@ def test_validate_completing_active_task_make_room_for_another_active_task(autho
     token = dict(user_client.cli_get_user_token(authorized_active_user_id))
 
     # creating active tasks
-    active_task_id = task_client.cli_create_inactive_task_for_active_user(
+    active_task_id = task_client.cli_create_task_for_active_user(
         user_token=token["token_value"],
         user_id=authorized_active_user_id,
         task_status="active"
     )
 
     for _ in range (ACTIVE_TASK_LIMIT - 1):
-        task_client.cli_create_inactive_task_for_active_user(
+        task_client.cli_create_task_for_active_user(
             user_token=token["token_value"],
             user_id=authorized_active_user_id,
             task_status="active"
@@ -226,7 +226,7 @@ def test_validate_completing_active_task_make_room_for_another_active_task(autho
 
     # creating one more active task
     with pytest.raises(ValueError) as exc:
-        task_client.cli_create_inactive_task_for_active_user(
+        task_client.cli_create_task_for_active_user(
             user_token=token["token_value"],
             user_id=authorized_active_user_id,
             task_status="active"
@@ -253,7 +253,7 @@ def test_validate_completing_active_task_make_room_for_another_active_task(autho
     assert count_tasks_present0 == count_tasks - 1, f"expected active tasks count to become {count_tasks - 1}, got {count_tasks_present0}"
 
     # create an active task
-    active_task_id = task_client.cli_create_inactive_task_for_active_user(
+    active_task_id = task_client.cli_create_task_for_active_user(
         user_token=token["token_value"],
         user_id=authorized_active_user_id,
         task_status="active"
@@ -270,7 +270,7 @@ def test_validate_active_task_limit_does_not_restrict_from_creating_inactive_tas
 
     # creating active tasks
     for _ in range (ACTIVE_TASK_LIMIT):
-        task_client.cli_create_inactive_task_for_active_user(
+        task_client.cli_create_task_for_active_user(
             user_token=token["token_value"],
             user_id=authorized_active_user_id,
             task_status="active"
@@ -282,7 +282,7 @@ def test_validate_active_task_limit_does_not_restrict_from_creating_inactive_tas
     assert ACTIVE_TASK_LIMIT == count_tasks, f"expected '{ACTIVE_TASK_LIMIT}' active tasks created, actual active tasks created: '{count_tasks}'"
 
     # creating an inactive task
-    task_client.cli_create_inactive_task_for_active_user(
+    task_client.cli_create_task_for_active_user(
         user_token=token["token_value"],
         user_id=authorized_active_user_id
     )
@@ -300,7 +300,7 @@ def test_validate_active_task_limit_does_not_restrict_from_updating_active_task(
 
     # creating active tasks
     for _ in range (ACTIVE_TASK_LIMIT):
-        task_client.cli_create_inactive_task_for_active_user(
+        task_client.cli_create_task_for_active_user(
             user_token=token["token_value"],
             user_id=authorized_active_user_id,
             task_status="active"
