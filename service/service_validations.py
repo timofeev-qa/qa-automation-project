@@ -98,15 +98,15 @@ def validate_user_status(status):
     if status not in ("active", "inactive"):
         raise ValueError("user's status can only be active or inactive")
 
-def validate_user_name_existance(user_name):
+def validate_user_name_exists(user_name):
     if user_name in (None, "", " "):
         raise ValueError("user_name is empty")
 
-def validate_user_email_existance(user_email):
+def validate_user_email_exists(user_email):
     if user_email in (None, "", " "):
         raise ValueError("user_email is empty")
 
-def validate_user_existance(user_id):
+def validate_user_exists(user_id):
     fetched_user = get_user_by_id(user_id)
 
     if not fetched_user:
@@ -132,7 +132,7 @@ def validate_token_is_linked_to_user(actual_token, user_id):
     if actual_token in (None, "", " "):
         raise PermissionError("access denied: user_token is empty")
     
-    validate_user_existance(user_id)
+    validate_user_exists(user_id)
 
     expected_token = dict(get_token_by_user(user_id))
     if expected_token["token_value"] != actual_token:
@@ -209,15 +209,15 @@ def validate_task_is_done(task_id, payload):
     if fetched_task["task_status"] == "done" and has_other_fields:
         raise ValueError("cannot modify done task except for task_description")
 
-def validate_key_existance(key):
+def validate_key_presence(key):
     if key in (None, "", " "):
         raise ValueError(f"{key} is empty")
     
-def validate_task_existance(task):
+def validate_task_exists(task):
     if not task:
         raise ValueError("task not found")
 
-def return_search_key_is_active(is_active=None):
+def resolve_active_task_filter(is_active=None):
     if is_active is None:
         return False
     elif isinstance(is_active, str) and is_active.lower() == "active":
@@ -225,12 +225,12 @@ def return_search_key_is_active(is_active=None):
     else:
         raise ValueError("is_active must be 'active' or None")
 
-def validate_task_payload_is_instance(key):
-    if not isinstance(key, dict):
+def validate_task_payload_is_instance(payload):
+    if not isinstance(payload, dict):
         raise ValueError("task's payload must be a dict")
 
 def validate_tasks_limit_for_create(user_id, task_payload):
-    validate_key_existance(user_id)
+    validate_key_presence(user_id)
     validate_task_payload_is_instance(task_payload)
 
     if "task_status" in task_payload:
@@ -240,8 +240,8 @@ def validate_tasks_limit_for_create(user_id, task_payload):
                 raise ValueError(f"adding additional active task will exceed user's active tasks limit of: '{ACTIVE_TASK_LIMIT}'")
             
 def validate_tasks_limit_for_update(user_id, task_id, task_payload):
-    validate_key_existance(user_id)
-    validate_key_existance(task_id)
+    validate_key_presence(user_id)
+    validate_key_presence(task_id)
     validate_task_payload_is_instance(task_payload)
 
     if "task_status" in task_payload:

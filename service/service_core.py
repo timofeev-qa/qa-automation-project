@@ -20,13 +20,13 @@ from service.service_validations import (
     validate_user_for_update,
     validate_user_token,
     validate_user_is_active,
-    validate_user_name_existance,
-    validate_user_email_existance,
+    validate_user_name_exists,
+    validate_user_email_exists,
     validate_task_for_create,
     validate_task_for_update,
-    validate_key_existance,
+    validate_key_presence,
     validate_task_is_done,
-    return_search_key_is_active,
+    resolve_active_task_filter,
     validate_token_is_linked_to_user,
     validate_tasks_limit_for_create,
     validate_tasks_limit_for_update,
@@ -41,7 +41,7 @@ def svc_create_user(payload):
 
 # create token
 def svc_create_token(user_id, payload):
-    validate_key_existance(user_id)
+    validate_key_presence(user_id)
     create_token(user_id, payload)
 
 # create task
@@ -63,26 +63,26 @@ def svc_get_all_users():
     raise ValueError("users list is empty")
 
 def svc_get_user_by_id(user_id):
-    validate_key_existance(user_id)
+    validate_key_presence(user_id)
     return get_user_by_id(user_id)
 
 def svc_get_user_by_username(user_name):
-    validate_user_name_existance(user_name)
+    validate_user_name_exists(user_name)
     return get_user_by_username(user_name)
 
 def svc_get_user_by_email(user_email):
-    validate_user_email_existance(user_email)
+    validate_user_email_exists(user_email)
     return get_user_by_email(user_email)
 
 # get tokens
 def svc_get_token_by_user_id(user_id):
-    validate_key_existance(user_id)
+    validate_key_presence(user_id)
     return get_token_by_user(user_id)
 
 # get tasks
 def svc_get_tasks_by_user_id(user_id, is_active=None):
-    validate_key_existance(user_id)
-    if return_search_key_is_active(is_active):
+    validate_key_presence(user_id)
+    if resolve_active_task_filter(is_active):
         result = get_active_tasks_by_user(user_id)
     else:
         result = get_tasks_by_user(user_id)
@@ -93,20 +93,20 @@ def svc_get_tasks_by_user_id(user_id, is_active=None):
     raise ValueError("tasks list is empty")
 
 def svc_get_task_by_id(task_id):
-    validate_key_existance(task_id)
+    validate_key_presence(task_id)
     return get_task_by_id(task_id)
 
 # update
 # update user
 def svc_update_user_by_id(user_token, user_id, payload):
-    validate_key_existance(user_id)
+    validate_key_presence(user_id)
     validate_user_for_update(payload)
     validate_token_is_linked_to_user(user_token, user_id)
     return update_user_by_id(user_id, payload)
 
 # update task
 def svc_update_task_by_id(user_token, task_id, user_id, payload):
-    validate_key_existance(task_id)
+    validate_key_presence(task_id)
     validate_task_for_update(payload)
     validate_token_is_linked_to_user(user_token, user_id)
     validate_task_is_done(task_id, payload)
@@ -117,6 +117,6 @@ def svc_update_task_by_id(user_token, task_id, user_id, payload):
 # delete
 # delete user
 def svc_delete_user_by_id(user_token, user_id):
-    validate_key_existance(user_id)
+    validate_key_presence(user_id)
     validate_user_token(user_token, {"user_id": user_id})
     return delete_user_by_id(user_id)
