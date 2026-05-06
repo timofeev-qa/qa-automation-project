@@ -1,14 +1,10 @@
-# QA Automation Project (Users & Tasks)
+# QA Automation Project: Users, Tokens & Tasks
 
 ## Overview
 
-This project simulates a simple system with users and tasks.
+This project simulates a simple local system with users, tokens, and tasks.
 
-The main goal was not to build a real API, but to practice:
-- test design
-- working with data
-- validating business rules
-- writing meaningful tests instead of just checking endpoints
+The main goal was not to build a production API, but to practice layered QA automation around client, service, and database behavior.
 
 ---
 
