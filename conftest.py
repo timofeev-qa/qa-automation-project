@@ -19,8 +19,22 @@ def task_client(db_client):
 
 @pytest.fixture
 def authorized_user_id(user_client):
-    return user_client.cli_create_random_inactive_user()
+    user_id = user_client.cli_create_random_inactive_user()
+    token = dict(user_client.cli_get_user_token(user_id))
+    try:
+        yield user_id
+    finally:
+        user_client.cli_delete_user_by_id(
+            user_token=token["token_value"],
+            user_id=user_id)
 
 @pytest.fixture
 def authorized_active_user_id(user_client):
-    return user_client.cli_create_random_inactive_user(user_status="active")
+    active_user_id = user_client.cli_create_random_inactive_user(user_status="active")
+    token = dict(user_client.cli_get_user_token(active_user_id))
+    try:
+        yield active_user_id
+    finally:
+        user_client.cli_delete_user_by_id(
+            user_token=token["token_value"],
+            user_id=active_user_id)
